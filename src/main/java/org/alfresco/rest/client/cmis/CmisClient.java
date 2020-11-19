@@ -11,10 +11,10 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
-import org.apache.chemistry.opencmis.commons.impl.MimeTypes;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MimeTypeUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
@@ -38,8 +38,7 @@ public class CmisClient {
     Session session;
 
     @PostConstruct
-    public void init()
-    {
+    public void init() {
         String alfrescoBrowserUrl = alfrescoUrl + "/api/-default-/public/cmis/versions/1.1/browser";
 
         Map<String, String> parameter = new HashMap<>();
@@ -61,6 +60,10 @@ public class CmisClient {
         return session.getRootFolder();
     }
 
+    public Folder getFolderByPath(String path) {
+        return (Folder) session.getObjectByPath(path);
+    }
+
     public Folder createFolder(Folder parentFolder, String name) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(PropertyIds.OBJECT_TYPE_ID, BaseTypeId.CMIS_FOLDER.value());
@@ -68,7 +71,7 @@ public class CmisClient {
         return parentFolder.createFolder(properties);
     }
 
-    public Document createSimpleDocument(Folder folder, String name, String ext) {
+    public Document createSimpleDocument(Folder folder, String name) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(PropertyIds.OBJECT_TYPE_ID, BaseTypeId.CMIS_DOCUMENT.value());
         properties.put(PropertyIds.NAME, name);
@@ -76,7 +79,7 @@ public class CmisClient {
         byte[] content = "Hello World!".getBytes();
         InputStream stream = new ByteArrayInputStream(content);
         ContentStream contentStream = new ContentStreamImpl(name, BigInteger.valueOf(content.length),
-                MimeTypes.getMIMEType(ext), stream);
+                MimeTypeUtils.TEXT_PLAIN_VALUE, stream);
 
         return folder.createDocument(properties, contentStream, VersioningState.MAJOR);
     }

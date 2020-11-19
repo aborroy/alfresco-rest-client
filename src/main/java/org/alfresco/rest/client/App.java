@@ -2,6 +2,7 @@ package org.alfresco.rest.client;
 
 import org.alfresco.rest.client.action.ActionCreateDocument;
 import org.alfresco.rest.client.action.ActionCreateGroup;
+import org.alfresco.rest.client.action.ActionCreateSite;
 import org.alfresco.rest.client.cmis.CmisClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,9 @@ public class App implements CommandLineRunner {
     @Autowired
     ActionCreateGroup actionCreateGroup;
 
+    @Autowired
+    ActionCreateSite actionCreateSite;
+
     public void run(String... args) {
 
         switch (Objects.requireNonNull(env.getProperty("action"))) {
@@ -47,6 +51,14 @@ public class App implements CommandLineRunner {
                         Integer.parseInt(env.getProperty("group.levels", "2")),
                         Integer.parseInt(env.getProperty("group.count", "10")));
                 LOG.info("...groups created");
+                break;
+            case "site":
+                LOG.info("Creating sites...");
+                actionCreateSite.execute(
+                        Integer.parseInt(env.getProperty("site.count", "100")),
+                        env.getProperty("site.visibility", "MODERATED")
+                );
+                LOG.info("...sites created");
                 break;
             default:
                 LOG.error("Action {} is not supported", env.getProperty("action"));

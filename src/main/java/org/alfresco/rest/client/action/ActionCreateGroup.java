@@ -18,7 +18,7 @@ public class ActionCreateGroup {
     @Autowired
     RestClient restClient;
 
-    public void execute(Integer levelCount, Integer groupCount) {
+    public void execute(int levelCount, int groupCount) {
 
         AtomicReference<List<String>> parentGroups = new AtomicReference<>(Collections.emptyList());
         IntStream.rangeClosed(1, levelCount).forEach(l -> {

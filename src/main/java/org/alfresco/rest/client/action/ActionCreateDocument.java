@@ -20,7 +20,7 @@ public class ActionCreateDocument {
     @Autowired
     CmisClient cmisClient;
 
-    public void execute(Folder rootFolder, Integer documentCount, Integer splitDocumentsInFolders) {
+    public void execute(Folder rootFolder, int documentCount, int splitDocumentsInFolders) {
 
         Map<Integer, Folder> folders = new HashMap<>();
         IntStream.rangeClosed(1, documentCount / splitDocumentsInFolders).parallel().forEach(n -> {
@@ -30,7 +30,7 @@ public class ActionCreateDocument {
 
         IntStream.rangeClosed(1, documentCount).parallel().forEach(n -> {
             Folder folder = folders.get(n / splitDocumentsInFolders);
-            final Document doc = cmisClient.createSimpleDocument(folder, "text-" + n + ".txt", "txt");
+            final Document doc = cmisClient.createSimpleDocument(folder, "text-" + n + ".txt");
             LOG.info(String.format("created document %s", doc.getId()));
         });
 
