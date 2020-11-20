@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
 
 @Component
@@ -22,6 +23,7 @@ public class ActionCreateSite {
     CmisClient cmisClient;
 
     public void execute(Integer siteCount, String siteVisibility) {
+        AtomicReference<Integer> count = new AtomicReference<>(0);
         IntStream.rangeClosed(1, siteCount).parallel().forEach(n -> {
 
             String name = "site-" + n;
@@ -33,7 +35,9 @@ public class ActionCreateSite {
             Folder documentLibrary = cmisClient.getFolderByPath("/Sites/" + name + "/documentLibrary");
             cmisClient.createSimpleDocument(documentLibrary, name + ".txt");
 
-            LOG.info(String.format("created site %s", name));
+            count.set(count.get() + 1);
+
+            LOG.info(String.format("(%s/%s) created site-%s", count.get(), siteCount, name));
 
         });
     }
