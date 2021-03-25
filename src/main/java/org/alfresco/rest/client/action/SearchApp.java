@@ -42,15 +42,15 @@ public class SearchApp {
             List<ResultSetRowEntry> result = searchApi.search(new SearchRequest()
                     .query(new RequestQuery()
                             .language(RequestQuery.LanguageEnum.AFTS)
-                            .query("((SITE:\"test\" AND (cm:name:\"test\" OR cm:title:\"test\" OR cm:description:\"test\" OR " +
+                            .query("((SITE:\"test-0\" AND (cm:name:\"test\" OR cm:title:\"test\" OR cm:description:\"test\" OR " +
                                     "TEXT:\"test\" OR TAG:\"test\")))"))).getBody().getList().getEntries();
-            Assert.isTrue(result.size() == 100, "result is not 100");
+            Assert.isTrue(result.size() > 0, "result count is 0");
 
             result = searchApi.search(new SearchRequest()
                     .query(new RequestQuery()
                             .language(RequestQuery.LanguageEnum.AFTS)
-                            .query("(SITE:\"test\" AND TYPE:\"cm:content\" AND cm:name:\"Sample-Document-*\")"))).getBody().getList().getEntries();
-            Assert.isTrue(result.size() == 100, "result is not 100");
+                            .query("(SITE:\"test-0\" AND TYPE:\"cm:content\" AND cm:name:\"*sample*\")"))).getBody().getList().getEntries();
+            Assert.isTrue(result.size() > 0, "result count is 0");
         });
 
         Instant end = Instant.now();
