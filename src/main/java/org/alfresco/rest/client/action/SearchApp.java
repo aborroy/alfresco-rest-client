@@ -4,18 +4,17 @@ import org.alfresco.rest.client.util.FeignClientInterceptor;
 import org.alfresco.rest.client.util.User;
 import org.alfresco.search.handler.SearchApi;
 import org.alfresco.search.model.RequestQuery;
-import org.alfresco.search.model.ResultSetRowEntry;
 import org.alfresco.search.model.SearchRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.IntStream;
 
 @Component
@@ -29,28 +28,45 @@ public class SearchApp {
     @Autowired
     FeignClientInterceptor interceptor;
 
+    @Value("${action.site.sites}")
+    Integer siteCount;
+
+    @Value("${action.site.users}")
+    Integer userCount;
+
     @Value("${action.search.count}")
     Integer searchCount;
 
-    public void run(String... args) {
+    List<String> terms = List.of("english", "after", "petroleum", "team", "send", "standard",
+            "value", "risk", "very", "real", "class", "requirements",
+            "fold", "able", "reply", "version", "story", "just", "this",
+            "free", "blue", "green", "gauge", "flat", "friend", "note");
 
-        interceptor.setUser(new User().user("test-1").pass("test-1"));
+    public void run(String... args) {
 
         Instant start = Instant.now();
 
         IntStream.range(0, searchCount).forEach(i -> {
-            List<ResultSetRowEntry> result = searchApi.search(new SearchRequest()
-                    .query(new RequestQuery()
-                            .language(RequestQuery.LanguageEnum.AFTS)
-                            .query("((SITE:\"test-0\" AND (cm:name:\"test\" OR cm:title:\"test\" OR cm:description:\"test\" OR " +
-                                    "TEXT:\"test\" OR TAG:\"test\")))"))).getBody().getList().getEntries();
-            Assert.isTrue(result.size() > 0, "result count is 0");
 
-            result = searchApi.search(new SearchRequest()
+            String term = terms.get(i % terms.size());
+            String site = "test-" + new Random().nextInt(siteCount - 1);
+            String user = "test-" + new Random().nextInt(userCount - 1);
+
+            interceptor.setUser(new User().user(user).pass(user));
+
+            searchApi.search(new SearchRequest()
                     .query(new RequestQuery()
                             .language(RequestQuery.LanguageEnum.AFTS)
-                            .query("(SITE:\"test-0\" AND TYPE:\"cm:content\" AND cm:name:\"*sample*\")"))).getBody().getList().getEntries();
-            Assert.isTrue(result.size() > 0, "result count is 0");
+                            .query("((SITE:\"" + site + "\" AND (cm:name:\"" + term + "\" OR cm:title:\"" + term +
+                                    "\" OR cm:description:\"" + term + "\" OR " +
+                                    "TEXT:\"" + term + "\" OR TAG:\"" + term + "\")))")))
+                    .getBody().getList().getEntries();
+
+            searchApi.search(new SearchRequest()
+                    .query(new RequestQuery()
+                            .language(RequestQuery.LanguageEnum.AFTS)
+                            .query("(SITE:\"" + site + "\" AND TYPE:\"cm:content\" AND cm:name:\"*" + term + "*\")"))).getBody().getList().getEntries();
+
         });
 
         Instant end = Instant.now();
