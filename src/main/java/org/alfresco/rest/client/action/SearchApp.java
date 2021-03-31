@@ -37,10 +37,17 @@ public class SearchApp {
     @Value("${action.search.count}")
     Integer searchCount;
 
-    List<String> terms = List.of("english", "after", "petroleum", "team", "send", "standard",
-            "value", "risk", "very", "real", "class", "requirements",
-            "fold", "able", "reply", "version", "story", "just", "this",
-            "free", "blue", "green", "gauge", "flat", "friend", "note");
+    List<String> terms = List.of(
+            "english", "after", "petroleum", "team", "send", "standard", "value", "risk", "very", "real",
+            "class", "requirements", "fold", "able", "reply", "version", "story", "just", "this", "free",
+            "blue", "green", "gauge", "flat", "friend", "note", "abroad", "age", "mouse", "ride",
+            "orlando", "office", "member", "annual", "spot", "archived", "once", "good", "studied", "release",
+            "foundation", "five", "beach", "example", "biology", "designed", "books", "small", "country", "track",
+            "cycle", "january", "street", "dragon", "entry", "east", "dress", "hotel", "february", "advertise",
+            "decision", "heart", "production", "wear", "food", "fact", "result", "human", "item", "resource",
+            "offer", "largest", "foreign", "sign", "listen", "load", "love", "number", "jacket", "education",
+            "observed", "optimal", "moment", "atom", "distinct", "good", "name", "network", "hormone", "quick",
+            "study", "program", "profile", "power", "question", "rather", "response", "reserved", "float", "make");
 
     public void run(String... args) {
 
