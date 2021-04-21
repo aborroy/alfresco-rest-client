@@ -75,12 +75,15 @@ public class CreateSiteApp {
 
         IntStream.range(0, siteCount).forEach(siteNumber -> {
 
-            Site site = Objects.requireNonNull(sitesApi.createSite(
-                    new SiteBodyCreate()
-                            .id("test-" + siteNumber)
-                            .title("test-" + siteNumber)
-                            .visibility(SiteBodyCreate.VisibilityEnum.MODERATED),
-                    null, null, null).getBody()).getEntry();
+            Site site = sitesApi.getSite("test-" + siteNumber, null, null).getBody().getEntry();
+            if (site == null) {
+                site = Objects.requireNonNull(sitesApi.createSite(
+                        new SiteBodyCreate()
+                                .id("test-" + siteNumber)
+                                .title("test-" + siteNumber)
+                                .visibility(SiteBodyCreate.VisibilityEnum.MODERATED),
+                        null, null, null).getBody()).getEntry();
+            }
             LOG.info("Site {} created", "test-" + siteNumber);
 
             SiteContainer siteContainer = Objects.requireNonNull(sitesApi.getSiteContainer(site.getId(), "documentLibrary", null).getBody()).getEntry();
